@@ -1,0 +1,20 @@
+image: node:20
+
+stages:
+  - test
+
+cache:
+  key:
+    files:
+      - package-lock.json
+  paths:
+    - node_modules/
+
+before_script:
+  - npm ci
+
+test:
+  stage: test
+  script:
+    - npx eslint .
+    - npx jest --ci --passWithNoTests

@@ -1,0 +1,32 @@
+services:
+  microservice:
+    image: node:20
+    working_dir: /app
+    command: npm run ts-watch
+    volumes:
+      # Mount the project into the container so code changes are picked up
+      # without rebuilding.
+      - .:/app
+      # Keep the container's own node_modules instead of the host's.
+      - /app/node_modules
+    # [HOST:CONTAINER]
+    ports:
+      - '3000:3000'
+    env_file:
+      - .env
+    # Overrides anything defined in .env
+    environment:
+      - MONGO_HOST=mongodb://mongo:27017/microservice-development
+      # JWT_SECRET, AUTH_USERNAME and AUTH_PASSWORD come from .env (see .env.example)
+    depends_on:
+      - mongo
+
+  mongo:
+    image: mongo:7
+    ports:
+      - '27017:27017'
+    volumes:
+      - mongo-data:/data/db
+
+volumes:
+  mongo-data:
